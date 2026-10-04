@@ -1,0 +1,350 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ItemRenderer>
+	<Data>
+		<Sprite name="kirito_body" fileName="game/kirito_body_2.rttex" textureSize="480,448" frame="0,0" />
+		<Sprite name="kirito_punch_body" fileName="game/kirito_punch_body.rttex" textureSize="512,448" frame="0,0" />
+		<Sprite name="kirito_punch_fx" fileName="game/kirito_punch_fx_2.rttex" textureSize="384,384" frame="0,0" />
+		<Sprite name="kirito_respawn" fileName="game/kirito_death_respawn.rttex" textureSize="512,544" frame="0,1" />
+		<Sprite name="kirito_death" fileName="game/kirito_death_respawn.rttex" textureSize="512,544" frame="0,0" />
+		<Sprite name="kirito_reveal" fileName="game/kirito_death_respawn.rttex" textureSize="512,544" frame="0,2" />
+		<StateMachines>
+			<StateMachine name="Motion">
+				<States>
+					<State name="Spawn" />
+					<State name="Idle" />
+					<State name="Move" />
+					<State name="Jump" />
+					<State name="Fall" />
+					<State name="Punch" />
+					<State name="Dance" />
+					<State name="dance1" />
+					<State name="dance2" />
+					<State name="dance3" />
+					<State name="Respawn" />
+					<State name="Down" />
+				</States>
+				<Transitions>
+					<Transition to="Idle" from="Fall|Move|Jump|Punch|Dance|dance1|dance2|dance3|Down">
+						<Condition type="and">
+							<IsVariableBool name="onGround">true</IsVariableBool>
+							<IsVariableFloat name="speed.length" operator="Less" abs="true">0.1</IsVariableFloat>
+							<IsVariableBool name="isAttacking">false</IsVariableBool>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+							<IsAction operatorType="NotEqual">SLEEP</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="Move" from="Jump|Fall|Idle|Punch|Dance|dance1|dance2|dance3|Down">
+						<Condition type="and">
+							<IsVariableBool name="onGround">true</IsVariableBool>
+							<IsVariableFloat name="speed.length" operator="Greater" abs="true">0.1</IsVariableFloat>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+							<IsAction operatorType="NotEqual">SLEEP</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="Jump" from="Idle|Move|Fall|Punch|Dance|dance1|dance2|dance3|Down">
+						<Condition type="and">
+							<IsVariableBool name="onGround">false</IsVariableBool>
+							<IsVariableFloat name="speed.y" operator="Less">-0.1</IsVariableFloat>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+							<IsAction operatorType="NotEqual">SLEEP</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="Fall" from="Jump|Idle|Move|Punch|Dance|dance1|dance2|dance3|Down">
+						<Condition type="and">
+							<IsVariableBool name="onGround">false</IsVariableBool>
+							<IsVariableFloat name="speed.y" operator="Greater">0.1</IsVariableFloat>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+							<IsAction operatorType="NotEqual">SLEEP</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="Punch" from="Idle|Move|Jump|Fall|Dance|dance1|dance2|dance3|Down">
+						<Condition type="and">
+							<IsAction>PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="Dance" from="Move|Idle|Punch|Jump|Fall|Down">
+						<Condition type="or">
+							<IsAction>DANCE</IsAction>
+							<IsAction>DANCE_DAB</IsAction>
+							<IsAction>DANCE_FLOSS</IsAction>
+							<IsAction>DANCE_MARCH</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="dance1" from="Dance|dance3">
+						<Condition type="or">
+							<IsAnimationFinished>dance_anim3</IsAnimationFinished>
+							<IsState>Motion.Dance</IsState>
+						</Condition>
+					</Transition>
+					<Transition to="dance2" from="dance1">
+						<Condition>
+							<IsAnimationFinished>dance_anim1</IsAnimationFinished>
+						</Condition>
+					</Transition>
+					<Transition to="dance3" from="dance2">
+						<Condition>
+							<IsAnimationFinished>dance_anim2</IsAnimationFinished>
+						</Condition>
+					</Transition>
+					<Transition to="Down" from="Idle|Move|Jump|Fall|Punch|Dance|dance1|dance2|dance3">
+						<Condition type="and">
+							<IsAction>SLEEP</IsAction>
+							<IsVariableBool name="onGround">true</IsVariableBool>
+						</Condition>
+					</Transition>
+					<Transition to="Idle" from="Spawn">
+						<Condition>
+							<IsAnimationFinished>kirito_PreIdle</IsAnimationFinished>
+						</Condition>
+					</Transition>
+				</Transitions>
+			</StateMachine>
+			<StateMachine name="Reveal">
+				<States>
+					<State name="No" />
+					<State name="Done" />
+				</States>
+				<Transitions>
+					<Transition to="Done" from="No">
+						<Condition>
+							<IsAnimationFinished>kirito_PreIdle</IsAnimationFinished>
+						</Condition>
+					</Transition>
+				</Transitions>
+			</StateMachine>
+		</StateMachines>
+		<Animations>
+			<SpriteAnimation name="kirito_Idle" sprite="kirito_body" animTime="960" isLoop="true" playOnState="Motion.Idle">
+				<Frame>0,0</Frame>
+				<Frame>1,0</Frame>
+				<Frame>2,0</Frame>
+				<Frame>3,0</Frame>
+				<Frame>4,0</Frame>
+				<Frame>5,0</Frame>
+				<Frame>6,0</Frame>
+				<Frame>7,0</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="kirito_Move" sprite="kirito_body" animTime="540" isLoop="true" playOnState="Motion.Move">
+				<Frame>0,1</Frame>
+				<Frame>1,1</Frame>
+				<Frame>2,1</Frame>
+				<Frame>3,1</Frame>
+				<Frame>4,1</Frame>
+				<Frame>5,1</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="kirito_Jump" sprite="kirito_body" animTime="320" isLoop="false" playOnState="Motion.Jump">
+				<Frame>0,2</Frame>
+				<Frame>1,2</Frame>
+				<Frame>2,2</Frame>
+				<Frame>3,2</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="kirito_Fall" sprite="kirito_body" animTime="270" isLoop="false" playOnState="Motion.Fall">
+				<Frame>0,3</Frame>
+				<Frame>1,3</Frame>
+				<Frame>2,3</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="kirito_Down" sprite="kirito_body" animTime="320" isLoop="false" playOnState="Motion.Down">
+				<Frame>0,4</Frame>
+				<Frame>1,4</Frame>
+				<Frame>2,4</Frame>
+				<Frame>3,4</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="kirito_Punch" sprite="kirito_punch_body" animTime="700" isLoop="true" playOnState="Motion.Punch">
+				<Frame>0,0</Frame>
+				<Frame>1,0</Frame>
+				<Frame>2,0</Frame>
+				<Frame>3,0</Frame>
+				<Frame>4,0</Frame>
+				<Frame>5,0</Frame>
+				<Frame>6,0</Frame>
+				<Frame>7,0</Frame>
+				<Frame>0,1</Frame>
+				<Frame>1,1</Frame>
+				<Frame>2,1</Frame>
+				<Frame>3,1</Frame>
+				<Frame>4,1</Frame>
+				<Frame>5,1</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="kirito_Death" sprite="kirito_death" animTime="720" isLoop="false">
+				<Frame>0,0</Frame>
+				<Frame>1,0</Frame>
+				<Frame>2,0</Frame>
+				<Frame>3,0</Frame>
+				<Frame>4,0</Frame>
+				<Frame>5,0</Frame>
+				<Frame>6,0</Frame>
+				<Frame>7,0</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="kirito_Respawn" sprite="kirito_respawn" animTime="630" isLoop="false" playOnState="Motion.Respawn">
+				<Frame>0,1</Frame>
+				<Frame>1,1</Frame>
+				<Frame>2,1</Frame>
+				<Frame>3,1</Frame>
+				<Frame>4,1</Frame>
+				<Frame>5,1</Frame>
+				<Frame>6,1</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="kirito_PreIdle" sprite="kirito_reveal" animTime="800" isLoop="false" playOnState="Reveal.No" autoPlay="true">
+				<Frame>0,2</Frame>
+				<Frame>1,2</Frame>
+				<Frame>2,2</Frame>
+				<Frame>3,2</Frame>
+				<Frame>4,2</Frame>
+				<Frame>5,2</Frame>
+				<Frame>6,2</Frame>
+				<Frame>7,2</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="kirito_Punch_fx" sprite="kirito_punch_fx" animTime="700" isLoop="true" playOnState="Motion.Punch">
+				<Frame>0,0</Frame>
+				<Frame>0,0</Frame>
+				<Frame>1,0</Frame>
+				<Frame>2,0</Frame>
+				<Frame>3,0</Frame>
+				<Frame>3,0</Frame>
+				<Frame>0,1</Frame>
+				<Frame>0,1</Frame>
+				<Frame>1,1</Frame>
+				<Frame>1,1</Frame>
+				<Frame>2,1</Frame>
+				<Frame>3,1</Frame>
+				<Frame>0,2</Frame>
+				<Frame>0,0</Frame>
+				<Frame>1,2</Frame>
+				<Frame>1,2</Frame>
+				<Frame>2,2</Frame>
+				<Frame>2,2</Frame>
+				<Frame>3,2</Frame>
+				<Frame>3,2</Frame>
+				<Frame>0,3</Frame>
+				<Frame>0,3</Frame>
+				<Frame>1,3</Frame>
+				<Frame>1,3</Frame>
+				<Frame>2,3</Frame>
+				<Frame>3,3</Frame>
+				<Frame>0,4</Frame>
+				<Frame>0,0</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="dance_anim1" sprite="kirito_body" animTime="360" isLoop="false" playOnState="Motion.dance1">
+				<Frame>0,0</Frame>
+				<Frame>1,0</Frame>
+				<Frame>2,0</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="dance_anim2" sprite="kirito_body" animTime="360" isLoop="false" playOnState="Motion.dance2">
+				<Frame>3,0</Frame>
+				<Frame>4,0</Frame>
+				<Frame>5,0</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="dance_anim3" sprite="kirito_body" animTime="240" isLoop="false" playOnState="Motion.dance3">
+				<Frame>6,0</Frame>
+				<Frame>7,0</Frame>
+			</SpriteAnimation>
+		</Animations>
+		<TileStampData>
+			<Set name="FileName">game/particles9.rttex</Set>
+			<Set name="EndFrame">28,17</Set>
+			<Set name="FrameCount">4</Set>
+		</TileStampData>
+		<ParticleSystems>
+			<ParticleSystem name="ps_kiritoDeath" updateStage="OnKilled" renderStage="RenderInFront">
+				<Emitter>
+					<Set name="offset">0,-61</Set>
+					<Set name="lifeTime">0.01</Set>
+					<Set name="particlesPerEmission">1</Set>
+					<Set name="particlesToEmit">1</Set>
+				</Emitter>
+				<Particle usePlayerFacing="true">
+					<Set name="sprite">kirito_death</Set>
+					<Set name="renderAlignment">CENTER</Set>
+					<Set name="blendingMode">PREMULTIPLIED_ALPHA</Set>
+					<Set name="lifeTime">0.80</Set>
+					<Set name="initialScale">0.25,0.25</Set>
+					<Set name="initialVelocity">0,0</Set>
+					<Set name="finalVelocity">0,0</Set>
+				</Particle>
+			</ParticleSystem>
+		</ParticleSystems>
+		<RenderOptions>
+			<Default>
+				<Set name="JumpEndStateRange">100</Set>
+				<Set name="ClothingOffsetFromShoes">10000</Set>
+				<Set name="IsRidingBird">true</Set>
+				<Set name="IsVehicle">true</Set>
+				<Set name="UserNameOffset">75</Set>
+				<Set name="RenderShoesWithMermaidTail">true</Set>
+				<Set name="ShoesHidesBodyLegs">true</Set>
+				<Set name="IsToRenderPants">false</Set>
+				<Set name="IncludeAllActions">true</Set>
+				<Set name="IgnoreDefaultDamagedTileEffect">true</Set>
+				<Set name="IgnoreDefaultDestroyedTileEffect">true</Set>
+				<Set name="HasDeathParticles">true</Set>
+				<Set name="HideAngelOnDeath">true</Set>
+				<Set name="HideAvatarOnDeath">true</Set>
+				<Set name="IgnorePunchTypeCheck">true</Set>
+			</Default>
+			<Override overrideOnState="Motion.dance1|Motion.dance2|Motion.dance3">
+				<Set name="UserNameOffset">120</Set>
+			</Override>
+		</RenderOptions>
+	</Data>
+	<RenderRules>
+		<Update>
+			<AvatarTransform class="FootPosition" onState="Motion.Dance|Motion.dance1|Motion.dance2|Motion.dance3">
+				<Set name="foot1dy">0</Set>
+				<Set name="foot2dy">0</Set>
+				<Set name="foot1y">0</Set>
+				<Set name="foot2y">0</Set>
+			</AvatarTransform>
+			<AvatarTransform class="ActionUpdate" onState="Motion.Dance|Motion.dance1|Motion.dance2|Motion.dance3">
+				<Set name="action">NOD</Set>
+			</AvatarTransform>
+			<AvatarTransform class="Facing" onState="Motion.Dance|Motion.dance1|Motion.dance2|Motion.dance3">
+				<Set name="invert">false</Set>
+			</AvatarTransform>
+		</Update>
+		<RenderInFront>
+			<StopIf>
+				<IsVariableBool name="isMannequin">true</IsVariableBool>
+				<IsRenderMod>RENDER_MOD_MINI_YOU</IsRenderMod>
+			</StopIf>
+			<SpriteRender name="kirito_body" offset="0,-10049" drawShadow="true" onState="Motion.Idle|Motion.Dance" scale="0.25,0.25" />
+			<SpriteRender name="kirito_body" offset="0,-10049" drawShadow="true" onState="Motion.Move" scale="0.25,0.25" />
+			<SpriteRender name="kirito_body" offset="0,-10049" drawShadow="true" onState="Motion.Jump" scale="0.25,0.25" />
+			<SpriteRender name="kirito_body" offset="0,-10049" drawShadow="true" onState="Motion.Fall" scale="0.25,0.25" />
+			<SpriteRender name="kirito_punch_body" offset="0,-10049" drawShadow="true" onState="Motion.Punch" scale="0.25,0.25" />
+			<SpriteRender name="kirito_body" offset="0,-10049" drawShadow="true" onState="Motion.dance1" scale="0.25,0.25" />
+			<SpriteRender name="kirito_body" offset="0,-10049" drawShadow="true" onState="Motion.dance2" scale="0.25,0.25" />
+			<SpriteRender name="kirito_body" offset="0,-10049" drawShadow="true" onState="Motion.dance3" scale="0.25,0.25" />
+			<SpriteRender name="kirito_respawn" offset="0,-10061" drawShadow="true" onState="Motion.Respawn" scale="0.25,0.25" />
+			<SpriteRender name="kirito_body" offset="0,-10049" drawShadow="true" onState="Motion.Down" scale="0.25,0.25" />
+			<SpriteRender name="kirito_reveal" offset="0,-10061" drawShadow="true" onState="Motion.Spawn" scale="0.25,0.25" />
+			<SpriteRender name="kirito_punch_fx" offset="47,-10054" drawShadow="false" onState="Motion.Punch" scale="0.4,0.4" />
+		</RenderInFront>
+		<RenderShoes>
+			<StopIf>
+				<IsSitting>true</IsSitting>
+				<IsSleepingOnaBed>true</IsSleepingOnaBed>
+				<IsWearing slot="SHIRT">ITEM_ID_TACTICAL_STEALTH_DEVICE</IsWearing>
+			</StopIf>
+		</RenderShoes>
+	</RenderRules>
+</ItemRenderer>

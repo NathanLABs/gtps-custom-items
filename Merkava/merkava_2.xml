@@ -1,0 +1,365 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ItemRenderer>
+	<Data>
+		<Sprite name="merkava_body" fileName="game/merkava_body_2.rttex" textureSize="704,544" frame="0,0" />
+		<Sprite name="merkava_punch_body" fileName="game/merkava_punch_body.rttex" textureSize="1184,672" frame="0,0" />
+		<Sprite name="merkava_punch_fx" fileName="game/merkava_punch_fx.rttex" textureSize="1024,448" frame="0,0" />
+		<Sprite name="merkava_respawn" fileName="game/merkava_death_respawn.rttex" textureSize="800,640" frame="3,1" />
+		<Sprite name="merkava_death" fileName="game/merkava_death_respawn.rttex" textureSize="800,640" frame="0,0" />
+		<Sprite name="merkava_reveal" fileName="game/merkava_death_respawn.rttex" textureSize="800,640" frame="4,3" />
+		<Sprite name="merkava_air" fileName="game/merkava_air_2.rttex" textureSize="1152,1056" frame="0,0" />
+		<StateMachines>
+			<StateMachine name="Motion">
+				<States>
+					<State name="Spawn" />
+					<State name="Idle" />
+					<State name="Move" />
+					<State name="Jump" />
+					<State name="Fall" />
+					<State name="Punch" />
+					<State name="Dance" />
+					<State name="dance1" />
+					<State name="dance2" />
+					<State name="dance3" />
+					<State name="Respawn" />
+					<State name="Down" />
+				</States>
+				<Transitions>
+					<Transition to="Idle" from="Fall|Move|Jump|Punch|Dance|dance1|dance2|dance3|Down">
+						<Condition type="and">
+							<IsVariableBool name="onGround">true</IsVariableBool>
+							<IsVariableFloat name="speed.length" operator="Less" abs="true">0.1</IsVariableFloat>
+							<IsVariableBool name="isAttacking">false</IsVariableBool>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+							<IsAction operatorType="NotEqual">SLEEP</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="Move" from="Jump|Fall|Idle|Punch|Dance|dance1|dance2|dance3|Down">
+						<Condition type="and">
+							<IsVariableBool name="onGround">true</IsVariableBool>
+							<IsVariableFloat name="speed.length" operator="Greater" abs="true">0.1</IsVariableFloat>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+							<IsAction operatorType="NotEqual">SLEEP</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="Jump" from="Idle|Move|Fall|Punch|Dance|dance1|dance2|dance3|Down">
+						<Condition type="and">
+							<IsVariableBool name="onGround">false</IsVariableBool>
+							<IsVariableFloat name="speed.y" operator="Less">-0.1</IsVariableFloat>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+							<IsAction operatorType="NotEqual">SLEEP</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="Fall" from="Jump|Idle|Move|Punch|Dance|dance1|dance2|dance3|Down">
+						<Condition type="and">
+							<IsVariableBool name="onGround">false</IsVariableBool>
+							<IsVariableFloat name="speed.y" operator="Greater">0.1</IsVariableFloat>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+							<IsAction operatorType="NotEqual">SLEEP</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="Punch" from="Idle|Move|Jump|Fall|Dance|dance1|dance2|dance3|Down">
+						<Condition type="and">
+							<IsAction>PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="Dance" from="Move|Idle|Punch|Jump|Fall|Down">
+						<Condition type="or">
+							<IsAction>DANCE</IsAction>
+							<IsAction>DANCE_DAB</IsAction>
+							<IsAction>DANCE_FLOSS</IsAction>
+							<IsAction>DANCE_MARCH</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="dance1" from="Dance|dance3">
+						<Condition type="or">
+							<IsAnimationFinished>dance_anim3</IsAnimationFinished>
+							<IsState>Motion.Dance</IsState>
+						</Condition>
+					</Transition>
+					<Transition to="dance2" from="dance1">
+						<Condition>
+							<IsAnimationFinished>dance_anim1</IsAnimationFinished>
+						</Condition>
+					</Transition>
+					<Transition to="dance3" from="dance2">
+						<Condition>
+							<IsAnimationFinished>dance_anim2</IsAnimationFinished>
+						</Condition>
+					</Transition>
+					<Transition to="Down" from="Idle|Move|Jump|Fall|Punch|Dance|dance1|dance2|dance3">
+						<Condition type="and">
+							<IsAction>SLEEP</IsAction>
+							<IsVariableBool name="onGround">true</IsVariableBool>
+						</Condition>
+					</Transition>
+					<Transition to="Idle" from="Spawn">
+						<Condition>
+							<IsAnimationFinished>merkava_PreIdle</IsAnimationFinished>
+						</Condition>
+					</Transition>
+				</Transitions>
+			</StateMachine>
+			<StateMachine name="Reveal">
+				<States>
+					<State name="No" />
+					<State name="Done" />
+				</States>
+				<Transitions>
+					<Transition to="Done" from="No">
+						<Condition>
+							<IsAnimationFinished>merkava_PreIdle</IsAnimationFinished>
+						</Condition>
+					</Transition>
+				</Transitions>
+			</StateMachine>
+		</StateMachines>
+		<Animations>
+			<SpriteAnimation name="merkava_Idle" sprite="merkava_body" animTime="960" isLoop="true" playOnState="Motion.Idle">
+				<Frame>0,0</Frame>
+				<Frame>1,0</Frame>
+				<Frame>2,0</Frame>
+				<Frame>3,0</Frame>
+				<Frame>4,0</Frame>
+				<Frame>0,1</Frame>
+				<Frame>1,1</Frame>
+				<Frame>2,1</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="merkava_Move" sprite="merkava_body" animTime="720" isLoop="true" playOnState="Motion.Move">
+				<Frame>3,1</Frame>
+				<Frame>4,1</Frame>
+				<Frame>0,2</Frame>
+				<Frame>1,2</Frame>
+				<Frame>2,2</Frame>
+				<Frame>3,2</Frame>
+				<Frame>4,2</Frame>
+				<Frame>0,3</Frame>
+				<Frame>1,3</Frame>
+				<Frame>2,3</Frame>
+				<Frame>3,3</Frame>
+				<Frame>4,3</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="merkava_Down" sprite="merkava_body" animTime="480" isLoop="false" playOnState="Motion.Down">
+				<Frame>0,4</Frame>
+				<Frame>1,4</Frame>
+				<Frame>2,4</Frame>
+				<Frame>3,4</Frame>
+				<Frame>4,4</Frame>
+				<Frame>0,5</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="merkava_Jump" sprite="merkava_air" animTime="360" isLoop="false" playOnState="Motion.Jump">
+				<Frame>0,0</Frame>
+				<Frame>1,0</Frame>
+				<Frame>2,0</Frame>
+				<Frame>0,1</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="merkava_Fall" sprite="merkava_air" animTime="270" isLoop="false" playOnState="Motion.Fall">
+				<Frame>1,1</Frame>
+				<Frame>2,1</Frame>
+				<Frame>0,2</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="merkava_Punch" sprite="merkava_punch_body" animTime="700" isLoop="true" playOnState="Motion.Punch">
+				<Frame>0,0</Frame>
+				<Frame>1,0</Frame>
+				<Frame>2,0</Frame>
+				<Frame>0,1</Frame>
+				<Frame>1,1</Frame>
+				<Frame>2,1</Frame>
+				<Frame>0,2</Frame>
+				<Frame>1,2</Frame>
+				<Frame>2,2</Frame>
+				<Frame>0,3</Frame>
+				<Frame>1,3</Frame>
+				<Frame>2,3</Frame>
+				<Frame>0,4</Frame>
+				<Frame>1,4</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="merkava_Death" sprite="merkava_death" animTime="720" isLoop="false">
+				<Frame>0,0</Frame>
+				<Frame>1,0</Frame>
+				<Frame>2,0</Frame>
+				<Frame>3,0</Frame>
+				<Frame>4,0</Frame>
+				<Frame>0,1</Frame>
+				<Frame>1,1</Frame>
+				<Frame>2,1</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="merkava_Respawn" sprite="merkava_respawn" animTime="880" isLoop="false" playOnState="Motion.Respawn">
+				<Frame>3,1</Frame>
+				<Frame>4,1</Frame>
+				<Frame>0,2</Frame>
+				<Frame>1,2</Frame>
+				<Frame>2,2</Frame>
+				<Frame>3,2</Frame>
+				<Frame>4,2</Frame>
+				<Frame>0,3</Frame>
+				<Frame>1,3</Frame>
+				<Frame>2,3</Frame>
+				<Frame>3,3</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="merkava_PreIdle" sprite="merkava_reveal" animTime="900" isLoop="false" playOnState="Reveal.No" autoPlay="true">
+				<Frame>4,3</Frame>
+				<Frame>0,4</Frame>
+				<Frame>1,4</Frame>
+				<Frame>2,4</Frame>
+				<Frame>3,4</Frame>
+				<Frame>4,4</Frame>
+				<Frame>0,5</Frame>
+				<Frame>1,5</Frame>
+				<Frame>2,5</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="dance_anim1" sprite="merkava_body" animTime="360" isLoop="false" playOnState="Motion.dance1">
+				<Frame>0,0</Frame>
+				<Frame>1,0</Frame>
+				<Frame>2,0</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="dance_anim2" sprite="merkava_body" animTime="360" isLoop="false" playOnState="Motion.dance2">
+				<Frame>3,0</Frame>
+				<Frame>4,0</Frame>
+				<Frame>0,1</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="dance_anim3" sprite="merkava_body" animTime="240" isLoop="false" playOnState="Motion.dance3">
+				<Frame>1,1</Frame>
+				<Frame>2,1</Frame>
+			</SpriteAnimation>
+		</Animations>
+		<TileStampData>
+			<Set name="FileName">game/particles9.rttex</Set>
+			<Set name="EndFrame">28,17</Set>
+			<Set name="FrameCount">4</Set>
+		</TileStampData>
+		<ParticleSystems>
+			<ParticleSystem name="ps_merkavaDeath" updateStage="OnKilled" renderStage="RenderInFront">
+				<Emitter>
+					<Set name="offset">0,4.8</Set>
+					<Set name="lifeTime">0.01</Set>
+					<Set name="particlesPerEmission">1</Set>
+					<Set name="particlesToEmit">1</Set>
+				</Emitter>
+				<Particle usePlayerFacing="true">
+					<Set name="sprite">merkava_death</Set>
+					<Set name="renderAlignment">DOWN_CENTER</Set>
+					<Set name="blendingMode">PREMULTIPLIED_ALPHA</Set>
+					<Set name="lifeTime">0.8</Set>
+					<Set name="initialScale">0.2,0.2</Set>
+					<Set name="initialVelocity">0,15</Set>
+					<Set name="useGravity">true</Set>
+					<Set name="gravityVector">0,300</Set>
+					<Curve name="initialAlpha">
+						<KeyFrame>0,1</KeyFrame>
+						<KeyFrame>0.3,0.85</KeyFrame>
+						<KeyFrame>1,0</KeyFrame>
+					</Curve>
+				</Particle>
+			</ParticleSystem>
+			<ParticleSystem name="ps_merkavaWind" updateStage="OnPunchStart">
+				<Emitter>
+					<Set name="offset">65,-40</Set>
+					<Set name="lifeTime">0.01</Set>
+					<Set name="particlesPerEmission">1</Set>
+					<Set name="particlesToEmit">1</Set>
+				</Emitter>
+				<Particle usePlayerFacing="true">
+					<Set name="sprite">merkava_punch_fx</Set>
+					<Set name="renderAlignment">CENTER</Set>
+					<Set name="blendingMode">ADDITIVE</Set>
+					<Set name="lifeTime">0.32</Set>
+					<Set name="initialScale">0.12,0.12</Set>
+					<Set name="rotateWithVelocity">true</Set>
+					<Curve name="initialAlpha">
+						<KeyFrame>0,0.65</KeyFrame>
+						<KeyFrame>0.35,0.45</KeyFrame>
+						<KeyFrame>1,0</KeyFrame>
+					</Curve>
+					<VectorTo name="initialVelocity" source="targetPos" duration="lifeTime" x="1" angle="0" />
+				</Particle>
+			</ParticleSystem>
+		</ParticleSystems>
+		<RenderOptions>
+			<Default>
+				<Set name="JumpEndStateRange">100</Set>
+				<Set name="ClothingOffsetFromShoes">10000</Set>
+				<Set name="IsRidingBird">true</Set>
+				<Set name="IsVehicle">true</Set>
+				<Set name="UserNameOffset">75</Set>
+				<Set name="RenderShoesWithMermaidTail">true</Set>
+				<Set name="ShoesHidesBodyLegs">true</Set>
+				<Set name="IsToRenderPants">false</Set>
+				<Set name="IncludeAllActions">true</Set>
+				<Set name="IgnoreDefaultDamagedTileEffect">true</Set>
+				<Set name="IgnoreDefaultDestroyedTileEffect">true</Set>
+				<Set name="HasDeathParticles">true</Set>
+				<Set name="HideAngelOnDeath">true</Set>
+				<Set name="HideAvatarOnDeath">true</Set>
+				<Set name="IgnorePunchTypeCheck">true</Set>
+			</Default>
+			<Override overrideOnState="Motion.dance1|Motion.dance2|Motion.dance3">
+				<Set name="UserNameOffset">120</Set>
+			</Override>
+		</RenderOptions>
+	</Data>
+	<RenderRules>
+		<Update>
+			<AvatarTransform class="FootPosition" onState="Motion.Dance|Motion.dance1|Motion.dance2|Motion.dance3">
+				<Set name="foot1dy">0</Set>
+				<Set name="foot2dy">0</Set>
+				<Set name="foot1y">0</Set>
+				<Set name="foot2y">0</Set>
+			</AvatarTransform>
+			<AvatarTransform class="ActionUpdate" onState="Motion.Dance|Motion.dance1|Motion.dance2|Motion.dance3">
+				<Set name="action">NOD</Set>
+			</AvatarTransform>
+			<AvatarTransform class="Facing" onState="Motion.Dance|Motion.dance1|Motion.dance2|Motion.dance3">
+				<Set name="invert">false</Set>
+			</AvatarTransform>
+		</Update>
+		<RenderInFront>
+			<StopIf>
+				<IsVariableBool name="isMannequin">true</IsVariableBool>
+				<IsRenderMod>RENDER_MOD_MINI_YOU</IsRenderMod>
+			</StopIf>
+			<SpriteRender name="merkava_body" offset="0,-10049.6" drawShadow="true" onState="Motion.Idle|Motion.Dance" scale="0.2,0.2" />
+			<SpriteRender name="merkava_body" offset="0,-10049.6" drawShadow="true" onState="Motion.Move" scale="0.2,0.2" />
+			<SpriteRender name="merkava_air" offset="0,-10099.2" drawShadow="true" onState="Motion.Jump" scale="0.2,0.2" />
+			<SpriteRender name="merkava_air" offset="0,-10099.2" drawShadow="true" onState="Motion.Fall" scale="0.2,0.2" />
+			<SpriteRender name="merkava_punch_body" offset="0,-10062.4" drawShadow="true" onState="Motion.Punch" scale="0.2,0.2" />
+			<SpriteRender name="merkava_body" offset="0,-10049.6" drawShadow="true" onState="Motion.dance1" scale="0.2,0.2" />
+			<SpriteRender name="merkava_body" offset="0,-10049.6" drawShadow="true" onState="Motion.dance2" scale="0.2,0.2" />
+			<SpriteRender name="merkava_body" offset="0,-10049.6" drawShadow="true" onState="Motion.dance3" scale="0.2,0.2" />
+			<SpriteRender name="merkava_respawn" offset="0,-9995.2" drawShadow="true" onState="Motion.Respawn" scale="0.2,0.2" alignment="DOWN_CENTER" />
+			<SpriteRender name="merkava_body" offset="0,-10049.6" drawShadow="true" onState="Motion.Down" scale="0.2,0.2" />
+			<SpriteRender name="merkava_reveal" offset="0,-9995.2" drawShadow="true" onState="Motion.Spawn" scale="0.2,0.2" alignment="DOWN_CENTER" />
+			<ParticleSystemRender name="ps_merkavaWind" />
+		</RenderInFront>
+		<RenderShoes>
+			<StopIf>
+				<IsSitting>true</IsSitting>
+				<IsSleepingOnaBed>true</IsSleepingOnaBed>
+				<IsWearing slot="SHIRT">ITEM_ID_TACTICAL_STEALTH_DEVICE</IsWearing>
+			</StopIf>
+		</RenderShoes>
+		<OnPunchStart>
+			<ParticleSystemUpdate name="ps_merkavaWind" />
+		</OnPunchStart>
+	</RenderRules>
+</ItemRenderer>

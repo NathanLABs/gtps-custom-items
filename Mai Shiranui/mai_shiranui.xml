@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ItemRenderer>
+	<Data>
+		
+		<Sprite name="mai_body" fileName="game/mai_sheet.rttex" textureSize="171,160"/>
+
+		<StateMachines>
+			<StateMachine name="Motion">
+				<States>
+					<State name="Idle"  />
+					<State name="IdleAnim"/>
+					<State name="IdleSit"/>
+					<State name="Move"  />
+					<State name="Jump"  />
+					<State name="Fall"  />
+					<State name="FallHold"/>
+					<State name="Punch" />
+					<State name="PunchHold"/>
+					<State name="PunchEnd"/>
+					<State name="Dance" />
+					<State name="dance1"/>
+					<State name="dance2"/>
+					<State name="dance3"/>
+				</States>
+				<Transitions>
+					<Transition to="Idle" from="Fall|FallHold|Move|Jump|PunchEnd|Dance|dance1|dance2|dance3">
+						<Condition type="and">
+							<IsVariableBool name="onGround">true</IsVariableBool>
+							<IsVariableFloat name="speed.length" operator="Less" abs="true">0.1</IsVariableFloat>
+							<IsVariableBool name="isAttacking">false</IsVariableBool>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+						</Condition>
+					</Transition>
+
+					<!-- Idle chain -->
+					<Transition to="IdleAnim" from="Idle">
+						<Condition type="and">
+							<IsAnimationFinished>mai_IdleWait</IsAnimationFinished>
+							<IsVariableBool name="onGround">true</IsVariableBool>
+							<IsVariableFloat name="speed.length" operator="Less" abs="true">0.1</IsVariableFloat>
+						</Condition>
+					</Transition>
+					<Transition to="IdleSit" from="IdleAnim">
+						<Condition type="and">
+							<IsAnimationFinished>mai_IdleAnim</IsAnimationFinished>
+							<IsVariableBool name="onGround">true</IsVariableBool>
+							<IsVariableFloat name="speed.length" operator="Less" abs="true">0.1</IsVariableFloat>
+						</Condition>
+					</Transition>
+
+					<Transition to="Move" from="Jump|Fall|FallHold|Idle|IdleAnim|IdleSit|PunchEnd|Dance|dance1|dance2|dance3">
+						<Condition type="and">
+							<IsVariableBool name="onGround">true</IsVariableBool>
+							<IsVariableFloat name="speed.length" operator="Greater" abs="true">0.1</IsVariableFloat>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="Jump" from="Idle|IdleAnim|IdleSit|Move|Fall|FallHold|Punch|PunchHold|PunchEnd|Dance|dance1|dance2|dance3">
+						<Condition type="and">
+							<IsVariableBool name="onGround">false</IsVariableBool>
+							<IsVariableFloat name="speed.y" operator="Less">-0.1</IsVariableFloat>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="Fall" from="Jump|Idle|IdleAnim|IdleSit|Move|Punch|PunchHold|PunchEnd|Dance|dance1|dance2|dance3">
+						<Condition type="and">
+							<IsVariableBool name="onGround">false</IsVariableBool>
+							<IsVariableFloat name="speed.y" operator="Greater">0.1</IsVariableFloat>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+						</Condition>
+					</Transition>
+
+					<!-- Fall chain -->
+					<Transition to="FallHold" from="Fall">
+						<Condition type="and">
+							<IsAnimationFinished>mai_FallStart</IsAnimationFinished>
+							<IsVariableBool name="onGround">false</IsVariableBool>
+						</Condition>
+					</Transition>
+
+					<Transition to="Punch" from="Idle|IdleAnim|IdleSit|Move|Jump|Fall|FallHold|PunchEnd|Dance|dance1|dance2|dance3">
+						<Condition type="and">
+							<IsAction>PUNCH</IsAction>
+							<IsAction operatorType="NotEqual">DANCE</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_DAB</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_FLOSS</IsAction>
+							<IsAction operatorType="NotEqual">DANCE_MARCH</IsAction>
+						</Condition>
+					</Transition>
+
+					<!-- Punch chain -->
+					<Transition to="PunchHold" from="Punch">
+						<Condition type="and">
+							<IsAnimationFinished>mai_PunchStart</IsAnimationFinished>
+							<IsAction>PUNCH</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="PunchEnd" from="Punch">
+						<Condition type="and">
+							<IsAnimationFinished>mai_PunchStart</IsAnimationFinished>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="PunchEnd" from="PunchHold">
+						<Condition>
+							<IsAction operatorType="NotEqual">PUNCH</IsAction>
+						</Condition>
+					</Transition>
+
+					<Transition to="Dance" from="Move|Idle|IdleAnim|IdleSit|Punch|PunchHold|PunchEnd|Jump|Fall|FallHold">
+						<Condition type="or">
+							<IsAction>DANCE</IsAction>
+							<IsAction>DANCE_DAB</IsAction>
+							<IsAction>DANCE_FLOSS</IsAction>
+							<IsAction>DANCE_MARCH</IsAction>
+						</Condition>
+					</Transition>
+					<Transition to="dance1" from="Dance|dance3">
+						<Condition type="or">
+							<IsAnimationFinished>dance_anim3</IsAnimationFinished>
+							<IsState>Motion.Dance</IsState>
+						</Condition>
+					</Transition>
+					<Transition to="dance2" from="dance1">
+						<Condition><IsAnimationFinished>dance_anim1</IsAnimationFinished></Condition>
+					</Transition>
+					<Transition to="dance3" from="dance2">
+						<Condition><IsAnimationFinished>dance_anim2</IsAnimationFinished></Condition>
+					</Transition>
+				</Transitions>
+			</StateMachine>
+		</StateMachines>
+
+		<Animations>
+			<!--
+			  IDLE WAIT: frame 1-4 baris Move (row 1), loop 5x = 5000ms.
+			  col_baru = 8 - col_lama → 0,1,2,3 menjadi 8,7,6,5
+			-->
+			<SpriteAnimation name="mai_IdleWait" playOnState="Motion.Idle" sprite="mai_body" animTime="5000">
+				<Frame>8,1</Frame><Frame>7,1</Frame><Frame>6,1</Frame><Frame>5,1</Frame>
+				<Frame>8,1</Frame><Frame>7,1</Frame><Frame>6,1</Frame><Frame>5,1</Frame>
+				<Frame>8,1</Frame><Frame>7,1</Frame><Frame>6,1</Frame><Frame>5,1</Frame>
+				<Frame>8,1</Frame><Frame>7,1</Frame><Frame>6,1</Frame><Frame>5,1</Frame>
+				<Frame>8,1</Frame><Frame>7,1</Frame><Frame>6,1</Frame><Frame>5,1</Frame>
+			</SpriteAnimation>
+
+			<!--
+			  IDLE ANIM: frame 1-7 row 0 (col 0-6), main sekali.
+			  col 0,1,2,3,4,5,6 → 8,7,6,5,4,3,2
+			-->
+			<SpriteAnimation name="mai_IdleAnim" playOnState="Motion.IdleAnim" sprite="mai_body" animTime="1554">
+				<Frame>8,0</Frame><Frame>7,0</Frame><Frame>6,0</Frame><Frame>5,0</Frame>
+				<Frame>4,0</Frame><Frame>3,0</Frame><Frame>2,0</Frame>
+			</SpriteAnimation>
+
+			<!--
+			  IDLE SIT: frame 8-9 row 0 (col 7-8), loop terus (duduk).
+			  col 7,8 → 1,0
+			-->
+			<SpriteAnimation name="mai_IdleSit" playOnState="Motion.IdleSit" sprite="mai_body" animTime="444" isLoop="true">
+				<Frame>1,0</Frame><Frame>0,0</Frame>
+			</SpriteAnimation>
+
+			<!--
+			  MOVE/WALK: row 1, 9 frames, loop.
+			  col 0..8 → 8..0
+			-->
+			<SpriteAnimation name="mai_Move" playOnState="Motion.Move" sprite="mai_body" animTime="900" isLoop="true">
+				<Frame>8,1</Frame><Frame>7,1</Frame><Frame>6,1</Frame>
+				<Frame>5,1</Frame><Frame>4,1</Frame><Frame>3,1</Frame>
+				<Frame>2,1</Frame><Frame>1,1</Frame><Frame>0,1</Frame>
+			</SpriteAnimation>
+
+			<!--
+			  JUMP: row 2, 9 frames.
+			  col 0..8 → 8..0
+			-->
+			<SpriteAnimation name="mai_Jump" playOnState="Motion.Jump" sprite="mai_body" animTime="720">
+				<Frame>8,2</Frame><Frame>7,2</Frame><Frame>6,2</Frame>
+				<Frame>5,2</Frame><Frame>4,2</Frame><Frame>3,2</Frame>
+				<Frame>2,2</Frame><Frame>1,2</Frame><Frame>0,2</Frame>
+			</SpriteAnimation>
+
+			<!--
+			  PUNCH START: row 3, frame 1-2 (col 0-1), main sekali.
+			  col 0,1 → 8,7
+			-->
+			<SpriteAnimation name="mai_PunchStart" playOnState="Motion.Punch" sprite="mai_body" animTime="200">
+				<Frame>8,3</Frame><Frame>7,3</Frame>
+			</SpriteAnimation>
+
+			<!--
+			  PUNCH HOLD: row 3, frame 3-6 (col 2-5), loop selama PUNCH ditahan.
+			  col 2,3,4,5 → 6,5,4,3
+			-->
+			<SpriteAnimation name="mai_PunchHold" playOnState="Motion.PunchHold" sprite="mai_body" animTime="400" isLoop="true">
+				<Frame>6,3</Frame><Frame>5,3</Frame><Frame>4,3</Frame><Frame>3,3</Frame>
+			</SpriteAnimation>
+
+			<!--
+			  PUNCH END: row 3, frame 7-9 (col 6-8), main sekali setelah PUNCH dilepas.
+			  col 6,7,8 → 2,1,0
+			-->
+			<SpriteAnimation name="mai_PunchEnd" playOnState="Motion.PunchEnd" sprite="mai_body" animTime="300">
+				<Frame>2,3</Frame><Frame>1,3</Frame><Frame>0,3</Frame>
+			</SpriteAnimation>
+
+			<!--
+			  FALL START: row 4, frame 1-2 (col 0-1), main sekali.
+			  col 0,1 → 8,7
+			-->
+			<SpriteAnimation name="mai_FallStart" playOnState="Motion.Fall" sprite="mai_body" animTime="160">
+				<Frame>8,4</Frame><Frame>7,4</Frame>
+			</SpriteAnimation>
+
+			<!--
+			  FALL HOLD: row 4, frame 3-6 (col 2-5), loop selagi di udara.
+			  col 2,3,4,5 → 6,5,4,3
+			-->
+			<SpriteAnimation name="mai_FallHold" playOnState="Motion.FallHold" sprite="mai_body" animTime="320" isLoop="true">
+				<Frame>6,4</Frame><Frame>5,4</Frame><Frame>4,4</Frame><Frame>3,4</Frame>
+			</SpriteAnimation>
+
+			<!--
+			  DANCE: pakai frame dari row 0 (idle poses).
+			  dance1: col 4 → 4 (center, tidak berubah)
+			  dance2: col 6 → 2
+			  dance3: col 8 → 0  (ini frame kipas yang sudah difix!)
+			-->
+			<SpriteAnimation name="dance_anim1" playOnState="Motion.dance1" sprite="mai_body" animTime="430">
+				<Frame>4,0</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="dance_anim2" playOnState="Motion.dance2" sprite="mai_body" animTime="430">
+				<Frame>2,0</Frame>
+			</SpriteAnimation>
+			<SpriteAnimation name="dance_anim3" playOnState="Motion.dance3" sprite="mai_body" animTime="430">
+				<Frame>0,0</Frame>
+			</SpriteAnimation>
+		</Animations>
+
+		<TileStampData>
+			<Set name="FileName">game/particles9.rttex</Set>
+			<Set name="EndFrame">28,17</Set>
+			<Set name="FrameCount">4</Set>
+		</TileStampData>
+		<ParticleSystems/>
+
+		<RenderOptions>
+			<Default>
+				<Set name="JumpEndStateRange">100</Set>
+				<Set name="ClothingOffsetFromShoes">10000</Set>
+				<Set name="IsRidingBird">true</Set>
+				<Set name="IsVehicle">true</Set>
+				<Set name="UserNameOffset">75</Set>
+				<Set name="RenderShoesWithMermaidTail">true</Set>
+				<Set name="ShoesHidesBodyLegs">true</Set>
+				<Set name="IsToRenderPants">false</Set>
+				<Set name="IncludeAllActions">true</Set>
+				<Set name="IgnoreDefaultDamagedTileEffect">true</Set>
+				<Set name="IgnoreDefaultDestroyedTileEffect">true</Set>
+			</Default>
+			<Override overrideOnState="Motion.dance1|Motion.dance2|Motion.dance3">
+				<Set name="UserNameOffset">120</Set>
+			</Override>
+		</RenderOptions>
+	</Data>
+
+	<RenderRules>
+		<Update>
+			<AvatarTransform class="FootPosition" onState="Motion.Dance|Motion.dance1|Motion.dance2|Motion.dance3">
+				<Set name="foot1dy">0</Set><Set name="foot2dy">0</Set>
+				<Set name="foot1y">0</Set><Set name="foot2y">0</Set>
+			</AvatarTransform>
+			<AvatarTransform class="ActionUpdate" onState="Motion.Dance|Motion.dance1|Motion.dance2|Motion.dance3">
+				<Set name="action">NOD</Set>
+			</AvatarTransform>
+
+			<!--
+			  Facing: masalah facing lama sudah resolved dengan cara mirror sheet manual.
+			  Tidak perlu override invert di sini lagi.
+			-->
+
+			<!-- Dance: lock facing -->
+			<AvatarTransform class="Facing" onState="Motion.Dance|Motion.dance1|Motion.dance2|Motion.dance3">
+				<Set name="invert">false</Set>
+			</AvatarTransform>
+		</Update>
+
+		<RenderInFront>
+			<StopIf>
+				<IsVariableBool name="isMannequin">true</IsVariableBool>
+				<IsRenderMod>RENDER_MOD_MINI_YOU</IsRenderMod>
+			</StopIf>
+
+			<SpriteRender name="mai_body" offset="0,-10070" drawShadow="true" onState="Motion.Idle"      scale="1.0,1.0"/>
+			<SpriteRender name="mai_body" offset="0,-10070" drawShadow="true" onState="Motion.IdleAnim"  scale="1.0,1.0"/>
+			<SpriteRender name="mai_body" offset="0,-10070" drawShadow="true" onState="Motion.IdleSit"   scale="1.0,1.0"/>
+			<SpriteRender name="mai_body" offset="0,-10070" drawShadow="true" onState="Motion.Move"      scale="1.0,1.0"/>
+			<SpriteRender name="mai_body" offset="0,-10070" drawShadow="true" onState="Motion.Jump"      scale="1.0,1.0"/>
+			<SpriteRender name="mai_body" offset="0,-10070" drawShadow="true" onState="Motion.Fall"      scale="1.0,1.0"/>
+			<SpriteRender name="mai_body" offset="0,-10070" drawShadow="true" onState="Motion.FallHold"  scale="1.0,1.0"/>
+			<SpriteRender name="mai_body" offset="0,-10070" drawShadow="true" onState="Motion.Punch"     scale="1.0,1.0"/>
+			<SpriteRender name="mai_body" offset="0,-10070" drawShadow="true" onState="Motion.PunchHold" scale="1.0,1.0"/>
+			<SpriteRender name="mai_body" offset="0,-10070" drawShadow="true" onState="Motion.PunchEnd"  scale="1.0,1.0"/>
+
+			<SpriteRender name="mai_body" offset="0,-10070" drawShadow="true" onState="Motion.dance1" scale="1.0,1.0"/>
+			<SpriteRender name="mai_body" offset="0,-10070" drawShadow="true" onState="Motion.dance2" scale="1.0,1.0"/>
+			<SpriteRender name="mai_body" offset="0,-10070" drawShadow="true" onState="Motion.dance3" scale="1.0,1.0"/>
+
+			<MusicSource onState="Motion.dance1|Motion.dance2|Motion.dance3">
+				<Set name="ItemID">ITEM_ID_ROLLBACK_II</Set>
+				<Set name="FadeOutTimeMs">500</Set>
+			</MusicSource>
+		</RenderInFront>
+
+		<RenderShoes>
+			<StopIf>
+				<IsSitting>true</IsSitting>
+				<IsSleepingOnaBed>true</IsSleepingOnaBed>
+				<IsWearing slot="SHIRT">ITEM_ID_TACTICAL_STEALTH_DEVICE</IsWearing>
+			</StopIf>
+		</RenderShoes>
+	</RenderRules>
+</ItemRenderer>
